@@ -37,7 +37,7 @@ namespace SandBox
             {
                 string filePath = file.FullName;
                 TagLib.File musicFile = TagLib.File.Create(filePath);
-                string artist = musicFile.Tag.FirstPerformer;
+                string artist = String.Join("/",musicFile.Tag.Performers);
                 if (artist == null)
                 {
                     artist = "<unknown>";
@@ -48,7 +48,18 @@ namespace SandBox
                 if (title != null)
                 {
                     title = MakeValidFileName(title);
-                    System.IO.File.Move(filePath, "C:/Users/steng/Desktop/New folder/" + artist + "-" + title + ".mp3");
+                    try
+                    {
+                        System.IO.File.Move(filePath, "C:/Users/steng/Desktop/New folder/" + artist + "-" + title + ".mp3");
+                    }
+                    catch (IOException e)
+                    {
+                        if (e.Message == "Cannot create a file when that file already exists.\r\n")
+                        {
+                            System.IO.File.Move(filePath, "C:/Users/steng/Desktop/New folder/" + artist + "-" + title + "_.mp3");
+                        }
+                    }
+                    
                 }
             }
         }
