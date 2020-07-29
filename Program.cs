@@ -3,7 +3,7 @@ using System.IO;
 using Microsoft.Win32;
 using TagLib;
 
-namespace Sandbox
+namespace SandBox
 {
     class Program
     {
@@ -14,7 +14,7 @@ namespace Sandbox
             FileInfo[] userDirectoryFiles = null;
             try
             {
-                var userDirectory = new DirectoryInfo(userInput);
+                var userDirectory = new DirectoryInfo(@userInput);
                 userDirectoryFiles = userDirectory.GetFiles("*.mp3");
             }
             catch
@@ -37,10 +37,19 @@ namespace Sandbox
             {
                 string filePath = file.FullName;
                 TagLib.File musicFile = TagLib.File.Create(filePath);
-                var artist = MakeValidFileName(musicFile.Tag.FirstPerformer);
-                var title = MakeValidFileName(musicFile.Tag.Title);
+                string artist = musicFile.Tag.FirstPerformer;
+                if (artist == null)
+                {
+                    artist = "<unknown>";
+                }
+                artist = MakeValidFileName(artist);
+                string title = musicFile.Tag.Title;
                 musicFile.Dispose();
-                System.IO.File.Move(filePath, "C:/Users/steng/Desktop/New folder/" + artist+"-"+title + ".mp3");
+                if (title != null)
+                {
+                    title = MakeValidFileName(title);
+                    System.IO.File.Move(filePath, "C:/Users/steng/Desktop/New folder/" + artist + "-" + title + ".mp3");
+                }
             }
         }
         private static string MakeValidFileName(string name)
